@@ -1,0 +1,34 @@
+name: Validate LinkML Data
+
+on:
+    pull_request:
+        paths:
+            - "stamped-checklist-schema.yaml"
+            - "stamped-checklist.json"
+            - ".github/workflows/validate.yml"
+    workflow_dispatch:
+
+jobs:
+    validate:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.11"
+
+            - name: Install LinkML
+              run: pip install linkml
+
+            - name: Validate checklist
+              run: linkml-validate --schema ./stamped-checklist-schema.yaml --target-class Checklist ./stamped-checklist.json
+
+            - name: Cross-schema referential integrity
+              run: |
+                mkdir -p /tmp/schemas
+                curl -fsSL https://raw.githubusercontent.com/stamped-principles/stamped-principles-schema/main/stamped-principles-schema.yaml -o /tmp/schemas/stamped-principles-schema.yaml
+                python ./.github/scripts/check_cross_refs.py --principles /tmp/schemas/stamped-principles.json --checklist ./stamped-checklist.json
