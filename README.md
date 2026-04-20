@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/1216381493.svg)](https://doi.org/10.5281/zenodo.19672390)
+
 # STAMPED Checklist (Schema)
 
 The formal LinkML schema and instance for the STAMPED checklist.
