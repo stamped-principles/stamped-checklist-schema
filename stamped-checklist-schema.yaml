@@ -6,16 +6,17 @@ description: >-
   items grouped under STAMPED principles. References principles defined in
   the separately versioned `stamped-principles` schema.
 license: CC-BY-4.0
-version: 0.1.0
+version: 0.1.1
 
 prefixes:
   linkml: https://w3id.org/linkml/
   schema: https://schema.org/
+  stamped: https://raw.githubusercontent.com/stamped-principles/stamped-principles-schema/main/
   stamped-checklist: https://github.com/stamped-principles/stamped-checklist-schema
 
 imports:
   - linkml:types
-  - stamped-principles-schema
+  - stamped:stamped-principles-schema
 
 classes:
   Checklist:

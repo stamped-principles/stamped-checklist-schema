@@ -1,0 +1,75 @@
+name: Check version bump
+on:
+    pull_request:
+        paths:
+            - "stamped-checklist-schema.yaml"
+            - "stamped-checklist.json"
+
+jobs:
+    check-version-bump:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Check VERSION was bumped in each versioned file
+              env:
+                  BASE_REF: ${{ github.base_ref }}
+              run: |
+                  set -u
+
+                  # Each entry: "path|grep-pattern|sed-extract"
+                  FILES=(
+                    'stamped-checklist-schema.yaml|^version:|s/version:[[:space:]]*["'\'']\?\([^"'\'' ]*\)["'\'']\?.*/\1/'
+                    'stamped-checklist.json|"version"|s/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/'
+                  )
+
+                  CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
+                  FAILED=0
+
+                  for entry in "${FILES[@]}"; do
+                    IFS='|' read -r FILE PATTERN EXTRACT <<< "$entry"
+
+                    echo "::group::$FILE"
+
+                    if ! grep -qx "$FILE" <<< "$CHANGED_FILES"; then
+                      echo "$FILE not modified in this PR, skipping."
+                      echo "::endgroup::"
+                      continue
+                    fi
+
+                    BASE_VERSION=$(git show "origin/$BASE_REF:$FILE" 2>/dev/null | grep -m1 "$PATTERN" | sed "$EXTRACT" || true)
+                    PR_VERSION=$(grep -m1 "$PATTERN" "$FILE" | sed "$EXTRACT" || true)
+
+                    if [ -z "$PR_VERSION" ]; then
+                      echo "::error file=$FILE::Could not extract version from $FILE. Ensure version is defined with pattern matching: $PATTERN"
+                      FAILED=1
+                      echo "::endgroup::"
+                      continue
+                    fi
+
+                    if [ -z "$BASE_VERSION" ]; then
+                      echo "VERSION introduced as $PR_VERSION (no prior version on base branch) ✓"
+                      echo "::endgroup::"
+                      continue
+                    fi
+
+                    echo "Base branch version: $BASE_VERSION"
+                    echo "PR branch version:   $PR_VERSION"
+
+                    if [ "$BASE_VERSION" = "$PR_VERSION" ]; then
+                      echo "::error file=$FILE::$FILE was modified but version was not bumped (still \"$PR_VERSION\"). Please update the version."
+                      FAILED=1
+                      echo "::endgroup::"
+                      continue
+                    fi
+
+                    echo "VERSION bumped from $BASE_VERSION to $PR_VERSION ✓"
+                    echo "::endgroup::"
+                  done
+
+                  exit $FAILED
