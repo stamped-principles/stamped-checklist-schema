@@ -1,4 +1,4 @@
-[![DOI](https://zenodo.org/badge/1216381493.svg)](https://doi.org/10.5281/zenodo.19672390)
+[![DOI](https://img.shields.io/badge/doi-10.5281%2Fzenodo.19672390-blue)](https://doi.org/10.5281/zenodo.19672390)
 
 # STAMPED Checklist (Schema)
 
