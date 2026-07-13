@@ -6,7 +6,7 @@ description: >-
   items grouped under STAMPED principles. References principles defined in
   the separately versioned `stamped-principles` schema.
 license: CC-BY-4.0
-version: 0.1.1
+version: 0.2.0
 
 prefixes:
   linkml: https://w3id.org/linkml/
@@ -24,8 +24,17 @@ classes:
     tree_root: true
     class_uri: schema:ItemList
     attributes:
-      version:
+      checklist_version:
         description: Version string for this checklist (e.g., "2.0.0").
+        slot_uri: schema:version
+        range: string
+        required: true
+        pattern: "^\\d+\\.\\d+\\.\\d+$"
+      schema_version:
+        description: >-
+          Version string for the schema intended to be used by an instance of the checklist (e.g., "2.0.0").
+          The instance may still be valid under other schema versions;
+          this only indicates the associated version at time of specification.
         slot_uri: schema:version
         range: string
         required: true
