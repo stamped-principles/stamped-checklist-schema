@@ -33,7 +33,7 @@ classes:
       schema_version:
         description: >-
           Version string for the schema intended to be used by an instance of the checklist (e.g., "2.0.0").
-          The instance may still be valid under other schema versions; 
+          The instance may still be valid under other schema versions;
           this only indicates the associated version at time of specification.
         slot_uri: schema:version
         range: string
