@@ -22,17 +22,18 @@ jobs:
               run: |
                   set -u
 
-                  # Each entry: "path|grep-pattern|sed-extract"
+                  # Each entry: "path;grep-pattern;sed-extract" (';'-delimited
+                  # since some patterns below use '|' for alternation)
                   FILES=(
-                    'stamped-checklist-schema.yaml|^version:|s/version:[[:space:]]*["'\'']\?\([^"'\'' ]*\)["'\'']\?.*/\1/'
-                    'stamped-checklist.json|"version"\|"checklist_version"|s/.*"\(checklist_version\|version\)"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\2/'
+                    'stamped-checklist-schema.yaml;^version:;s/version:[[:space:]]*["'\'']\?\([^"'\'' ]*\)["'\'']\?.*/\1/'
+                    'stamped-checklist.json;"version"\|"checklist_version";s/.*"\(checklist_version\|version\)"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\2/'
                   )
 
                   CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
                   FAILED=0
 
                   for entry in "${FILES[@]}"; do
-                    IFS='|' read -r FILE PATTERN EXTRACT <<< "$entry"
+                    IFS=';' read -r FILE PATTERN EXTRACT <<< "$entry"
 
                     echo "::group::$FILE"
 
