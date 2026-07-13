@@ -26,40 +26,7 @@ jobs:
                   git config user.email "github-actions[bot]@users.noreply.github.com"
 
             - name: Tag schema version
-              run: |
-                  set -eu
-                  VERSION=$(grep -m1 '^version:' stamped-checklist-schema.yaml | sed 's/version:[[:space:]]*["'\'']\?\([^"'\'' ]*\)["'\'']\?.*/\1/')
-                  if [ -z "$VERSION" ]; then
-                    echo "::error file=stamped-checklist-schema.yaml::Could not extract schema version."
-                    exit 1
-                  fi
-                  TAG="schema-v${VERSION}"
-                  if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
-                    echo "Tag ${TAG} already exists, skipping."
-                  else
-                    git tag -a "${TAG}" -m "Schema version ${VERSION}"
-                    git push origin "${TAG}"
-                    echo "Created tag ${TAG}"
-                  fi
+              run: .github/scripts/tag_version.sh stamped-checklist-schema.yaml yaml schema-v Schema
 
             - name: Tag checklist version
-              run: |
-                  set -eu
-                  # Prefer the checklist_version key; fall back to the legacy
-                  # top-level version key for pre-split checklist files.
-                  VERSION=$(grep -m1 '"checklist_version"' stamped-checklist.json | sed 's/.*"checklist_version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || true)
-                  if [ -z "$VERSION" ]; then
-                    VERSION=$(grep -m1 '"version"' stamped-checklist.json | sed 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/' || true)
-                  fi
-                  if [ -z "$VERSION" ]; then
-                    echo "::error file=stamped-checklist.json::Could not extract checklist version."
-                    exit 1
-                  fi
-                  TAG="checklist-v${VERSION}"
-                  if git rev-parse -q --verify "refs/tags/${TAG}" >/dev/null; then
-                    echo "Tag ${TAG} already exists, skipping."
-                  else
-                    git tag -a "${TAG}" -m "Checklist version ${VERSION}"
-                    git push origin "${TAG}"
-                    echo "Created tag ${TAG}"
-                  fi
+              run: .github/scripts/tag_version.sh stamped-checklist.json json checklist-v Checklist
