@@ -25,7 +25,7 @@ jobs:
                   # Each entry: "path|grep-pattern|sed-extract"
                   FILES=(
                     'stamped-checklist-schema.yaml|^version:|s/version:[[:space:]]*["'\'']\?\([^"'\'' ]*\)["'\'']\?.*/\1/'
-                    'stamped-checklist.json|"version"|s/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/'
+                    'stamped-checklist.json|"version"\|"checklist_version"|s/.*"\(checklist_version\|version\)"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\2/'
                   )
 
                   CHANGED_FILES=$(git diff --name-only "origin/$BASE_REF...HEAD")
