@@ -24,7 +24,7 @@ classes:
     tree_root: true
     class_uri: schema:ItemList
     attributes:
-      version:
+      checklist_version:
         description: Version string for this checklist (e.g., "2.0.0").
         slot_uri: schema:version
         range: string
