@@ -1,5 +1,5 @@
 {
-    "checklist_version": "0.3.0",
+    "checklist_version": "0.3.1",
     "schema_version": "0.2.0",
     "principles_version": "0.2.0",
     "data": [
@@ -146,7 +146,7 @@
                     "items": [
                         {
                             "id": "stamped-checklist:should/009",
-                            "text": "Are components governed by different access requirements isolated in separate modules where practical?"
+                            "text": "Are restricted data or software kept in their own modules?"
                         }
                     ]
                 },
