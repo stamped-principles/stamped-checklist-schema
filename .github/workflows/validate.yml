@@ -6,7 +6,12 @@ on:
             - "stamped-checklist-schema.yaml"
             - "stamped-checklist.json"
             - ".github/workflows/validate.yml"
+            - ".github/scripts/*.py"
+            - ".github/workflows/tag_release.yml"
     workflow_dispatch:
+
+permissions:
+    contents: read
 
 jobs:
     validate:
@@ -21,6 +26,9 @@ jobs:
               with:
                   python-version: "3.11"
 
+            - name: Test principles resolution
+              run: python -m unittest discover -s .github/scripts -p "test_*.py"
+
             - name: Install LinkML
               run: pip install linkml
 
@@ -28,8 +36,8 @@ jobs:
               run: linkml-validate --schema ./stamped-checklist-schema.yaml --target-class Checklist ./stamped-checklist.json
 
             - name: Cross-schema referential integrity
+              env:
+                GITHUB_TOKEN: ${{ github.token }}
               run: |
-                version=$(python -c 'import json; print(json.load(open("stamped-checklist.json"))["principles_version"])')
-                mkdir -p /tmp/schemas
-                curl -fsSL "https://raw.githubusercontent.com/stamped-principles/stamped-principles-schema/refs/tags/v${version}/stamped-principles.json" -o /tmp/schemas/stamped-principles.json
+                python .github/scripts/fetch_principles.py --output /tmp/schemas/stamped-principles.json
                 python ./.github/scripts/check_cross_refs.py --principles /tmp/schemas/stamped-principles.json --checklist ./stamped-checklist.json

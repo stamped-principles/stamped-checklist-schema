@@ -1,7 +1,7 @@
 {
-    "checklist_version": "0.3.1",
+    "checklist_version": "0.4.0",
     "schema_version": "0.2.0",
-    "principles_version": "0.2.0",
+    "principles_version": "0.3.0",
     "data": [
         {
             "level": "must",
@@ -20,6 +20,15 @@
                         {
                             "id": "stamped-checklist:must/003",
                             "text": "Is external software included in the environment or linked as submodules within the project boundary?"
+                        }
+                    ]
+                },
+                {
+                    "principle_codes": ["S.2"],
+                    "items": [
+                        {
+                            "id": "stamped-checklist:must/018",
+                            "text": "Starting from the research object, can a reader find the license terms for every component alongside its content?"
                         }
                     ]
                 },
@@ -124,6 +133,15 @@
                     ]
                 },
                 {
+                    "principle_codes": ["T.4"],
+                    "items": [
+                        {
+                            "id": "stamped-checklist:should/010",
+                            "text": "Does executing the code automatically produce a record of the actions it performed?"
+                        }
+                    ]
+                },
+                {
                     "principle_codes": ["A.2"],
                     "items": [
                         {
@@ -138,6 +156,19 @@
                         {
                             "id": "stamped-checklist:should/003",
                             "text": "Are raw data, processed data, code, and environment definitions separated into distinct modules?"
+                        }
+                    ]
+                },
+                {
+                    "principle_codes": ["M.3"],
+                    "items": [
+                        {
+                            "id": "stamped-checklist:should/011",
+                            "text": "Can a reader identify the license assigned to each module without having to infer it from a project-wide license?"
+                        },
+                        {
+                            "id": "stamped-checklist:should/012",
+                            "text": "When modules are combined, have their license terms been checked to confirm that they permit the intended combination?"
                         }
                     ]
                 },
@@ -177,6 +208,15 @@
                         {
                             "id": "stamped-checklist:should/008",
                             "text": "Is there a process for updating environment specifications when dependencies change, and are these updates tracked in version control?"
+                        }
+                    ]
+                },
+                {
+                    "principle_codes": ["D.3"],
+                    "items": [
+                        {
+                            "id": "stamped-checklist:should/013",
+                            "text": "Does each module identify its license in a way that lets a user look up the applicable terms?"
                         }
                     ]
                 }

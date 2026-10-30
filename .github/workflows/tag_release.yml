@@ -1,6 +1,7 @@
 name: Tag release
 
 on:
+    workflow_dispatch:
     push:
         branches:
             - main
@@ -13,12 +14,20 @@ permissions:
 
 jobs:
     tag-release:
+        if: github.ref == 'refs/heads/main'
         runs-on: ubuntu-latest
         steps:
             - name: Checkout
               uses: actions/checkout@v7
               with:
                   fetch-depth: 0
+
+            - name: Require released principles before creating tags
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}
+              run: |
+                  python .github/scripts/fetch_principles.py --output /tmp/schemas/stamped-principles.json
+                  python .github/scripts/check_cross_refs.py --principles /tmp/schemas/stamped-principles.json --checklist stamped-checklist.json
 
             - name: Configure git identity
               run: |

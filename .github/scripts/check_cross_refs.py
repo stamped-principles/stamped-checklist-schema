@@ -5,6 +5,7 @@ Verifies that:
   1. Checklist.principles_version == PrincipleSet.version
   2. Every principle_code referenced in the checklist exists
      in the principles instance.
+  3. Every principle has at least one checklist entry at its requirement level.
 
 Pattern validation is delegated to linkml-validate.
 """
@@ -78,6 +79,21 @@ def check_referenced_codes(
     return errors
 
 
+def check_principle_coverage(principles: dict, checklist: dict) -> list[str]:
+    covered = {
+        (code, group["level"])
+        for group in checklist.get("data", [])
+        for entry in group.get("entries", [])
+        for code in entry.get("principle_codes", [])
+    }
+    return [
+        f"Principle {principle['code']!r} has no checklist entry at "
+        f"level={principle['level']}"
+        for principle in principles.get("principles", [])
+        if (principle["code"], principle["level"]) not in covered
+    ]
+
+
 def main() -> int:
     args = parse_args()
 
@@ -96,6 +112,7 @@ def main() -> int:
     errors: list[str] = []
     errors.extend(check_version_alignment(principles, checklist))
     errors.extend(check_referenced_codes(principles, checklist))
+    errors.extend(check_principle_coverage(principles, checklist))
 
     if errors:
         for message in errors:
