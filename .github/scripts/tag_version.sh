@@ -2,8 +2,9 @@
 # Extract a version from a schema/checklist file and push a git tag for it.
 #
 # Usage: tag_version.sh <file> <format> <tag-prefix> <label>
-#   <format> is "yaml" or "json"; the version is read from the top-level
-#   "version" key in either case.
+#   <format> is "yaml" or "json". For yaml (the schema) the version is read
+#   from the top-level "version" key; for json (the checklist instance) it is
+#   read from the top-level "checklist_version" key.
 set -eu
 
 FILE="$1"
@@ -16,7 +17,7 @@ case "$FORMAT" in
         VERSION=$(grep -m1 '^version:' "$FILE" | sed 's/version:[[:space:]]*["'\'']\?\([^"'\'' ]*\)["'\'']\?.*/\1/')
         ;;
     json)
-        VERSION=$(grep -m1 '"version"' "$FILE" | sed 's/.*"version"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/')
+        VERSION=$(jq -r '.checklist_version // empty' "$FILE")
         ;;
     *)
         echo "::error::Unknown format '${FORMAT}', expected 'yaml' or 'json'."
